@@ -24,7 +24,7 @@ def init_browser():
     executable_path = {'executable_path': ChromeDriverManager().install()}
     return Browser('chrome', **executable_path, headless=True)
 
-def scrapping():
+def scrapping_mars_db():
     browser = init_browser():
     
     
@@ -38,14 +38,15 @@ def scrapping():
     news_p = nasa_mards_soup.find('div', class_='article_teaser_body').text
     
     #PL Mars Space Images - Featured Image
-    mars_space_website = 'https://spaceimages-mars.com'
+    featured_url = 'https://spaceimages-mars.com'
     featured_image_url = 'https://spaceimages-mars.com/image/featured/mars1.jpg'
     browser.visit(featured_image_url)
-    mars_html_image = browser.html
-    mars_soup = bs(mars_html_image, 'html.parser')
-    featured_image = mars_soup.find('div', class_ = 'carousel_items')
-    link = featured_image.article['style']
-    
+    image_html = browser.html
+    soup_mars = bs(image_html, 'html.parser')
+    featured_image = soup_mars.find('div', class_ = 'carousel_items')
+    image_link = featured_image.article['style']
+    full_image_url = featured_url + image_link 
+
     
     #Mars Facts
     url_mars_facts = 'https://galaxyfacts-mars.com'
@@ -70,7 +71,7 @@ def scrapping():
     }
     
     
-    return full_mars_data 
+    return scraped_mars_data 
 
 
 
