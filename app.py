@@ -26,8 +26,8 @@ def scraper():
 
     mars_db = scraper.scrapping_mars_db()
     mongo.db.mars.insert_one(mars_db)
-    return redirect("/", code=302)
+    return redirect("/")
 
 
 if __name__ == "__main__":
-    app.run
+    app.run(debug=True)

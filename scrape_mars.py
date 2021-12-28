@@ -1,18 +1,3 @@
-## Step 2 - MongoDB and Flask Application
-
-##Use MongoDB with Flask templating to create a new HTML page that displays all of the information that was scraped from the URLs above.
-
-#* Start by converting your Jupyter notebook into a Python script called `scrape_mars.py` with a function called `scrape` that will execute all of your scraping code from above and return one Python dictionary containing all of the scraped data.
-
-#* Next, create a route called `/scrape` that will import your `scrape_mars.py` script and #call your `scrape` function.
-
-#  * Store the return value in Mongo as a Python dictionary.
-
-#* Create a root route `/` that will query your Mongo database and pass the mars data into an HTML template to display the data.
-
-#* Create a template HTML file called `index.html` that will take the mars data dictionary and display all of the data in the appropriate HTML elements. Use the following as a guide for what the final product should look like, but feel free to create your own design.
-
-
 from splinter import Browser
 import os 
 from bs4 import BeautifulSoup as bs
@@ -38,15 +23,13 @@ def scrapping_mars_db():
     news_p = nasa_mards_soup.find('div', class_='article_teaser_body').text
     
     #PL Mars Space Images - Featured Image
-    featured_url = 'https://spaceimages-mars.com'
-    featured_image_url = 'https://spaceimages-mars.com/image/featured/mars1.jpg'
-    browser.visit(featured_image_url)
+    primary_url = "https://spaceimages-mars.com"
+    browser.visit(primary_url)
     image_html = browser.html
     soup_mars = bs(image_html, 'html.parser')
-    featured_image = soup_mars.find('div', class_ = 'carousel_items')
-    image_link = featured_image.article['style']
-    full_image_url = featured_url + image_link 
-
+    image = soup_mars.find('img', class_ = 'headerimage')
+    src = image["src"]
+    featured_image_url = "https://spaceimages-mars.com/" + src
     
     #Mars Facts
     url_mars_facts = 'https://galaxyfacts-mars.com'
@@ -56,10 +39,28 @@ def scrapping_mars_db():
     
     
     #Mars Hemispheres
-    mars_hemispheres = 'https://marshemispheres.com'
-    browser.visit(mars_hemispheres)
-    mars_hemispheres_html = browser.html
-    hemis_soup = bs(mars_hemispheres_html,'html.parser')
+    hem_url = "https://marshemispheres.com/"
+    browser.visit(hem_url)
+    html = browser.html
+    m_soup = bs(html, 'html.parser')
+    main_url = soup.find_all('div', class_='item')
+    titles = []
+    hemisphere_images_urls = []  
+    for each in main_url:
+    title = each.find('h3').text
+    url = each.find('a')['href']
+    hem_img_url = hem_url+url
+    browser.visit(hem_img_url)
+    html = browser.html
+    soup = BeautifulSoup(html, 'html.parser')
+    hemisphere_img_original = soup.find('div',class_='downloads')
+    hemisphere_img_url=hemisphere_img_original.find('a')['href']
+    img_data = dict({'title':title, 'img_url': hemisphere_img_url})
+    hemisphere_img_urls.append(img_data)
+    
+    
+    
+    
     
     
     full_mars_data = {
